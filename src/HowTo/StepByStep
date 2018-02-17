@@ -1,0 +1,54 @@
+1. Use WebStorm to create a new React.js file (not react native)
+2. Use the create-
+you should get something like this:
+
+/usr/local/bin/node /usr/local/lib/node_modules/create-react-app/index.js .
+
+Creating a new React app in /Users/doug/WebstormProjects/untitled.
+
+Installing packages. This might take a couple of minutes.
+Installing react, react-dom, and react-scripts...
+
+
+> fsevents@1.1.3 install /Users/doug/WebstormProjects/untitled/node_modules/fsevents
+> node install
+
+[fsevents] Success: "/Users/doug/WebstormProjects/untitled/node_modules/fsevents/lib/binding/Release/node-v57-darwin-x64/fse.node" already installed
+Pass --update-binary to reinstall or --build-from-source to recompile
+
+> uglifyjs-webpack-plugin@0.4.6 postinstall /Users/doug/WebstormProjects/untitled/node_modules/uglifyjs-webpack-plugin
+> node lib/post_install.js
+
++ react-dom@16.2.0
++ react@16.2.0
++ react-scripts@1.1.1
+added 1269 packages in 79.008s
+
+Success! Created untitled at /Users/doug/WebstormProjects/untitled
+Inside that directory, you can run several commands:
+
+  npm start
+    Starts the development server.
+
+  npm run build
+    Bundles the app into static files for production.
+
+  npm test
+    Starts the test runner.
+
+  npm run eject
+    Removes this tool and copies build dependencies, configuration files
+    and scripts into the app directory. If you do this, you can’t go back!
+
+We suggest that you begin by typing:
+
+  cd /Users/doug/WebstormProjects/Sokoban
+  npm start
+
+Happy hacking!
+Done
+
+3. Open Terminal on your mac
+ Do this:
+   cd /Users/doug/WebstormProjects/untitled
+   npm start
