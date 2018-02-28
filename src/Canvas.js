@@ -7,8 +7,8 @@ class Canvas extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            playerX: 1,
-            playerY: 1,
+            storedCount: 0,
+            playerMessage: "Click on board to set Focus",
             height: 50,
             width: 50,
             layoutArray: {}
@@ -16,10 +16,12 @@ class Canvas extends React.Component {
 
 
         this.handleKey = this.handleKey.bind(this);
+        this.handleClick = this.handleClick.bind(this);
         this.updateBoardPiece = this.updateBoardPiece.bind(this);
         this.moveCrate = this.moveCrate.bind(this);
         this.moveWorker = this.moveWorker.bind(this);
         this.restorePreviousPosition = this.restorePreviousPosition.bind(this);
+        this.makeItRed = this.makeItRed.bind(this);
         this.draw = this.draw.bind(this);
     }
 
@@ -36,8 +38,17 @@ class Canvas extends React.Component {
             this.restorePreviousPosition(theCrate);
             if (this.state.layoutArray[x3][y3].name === "Storage") {
                 theCrate.stored = true;
+                var currentCount = this.state.storedCount + 1;
+                this.setState((state) => ({storedCount: this.state.storedCount + 1}));
+                if (currentCount === 6) {
+                    this.setState((state) => ({playerMessage: "You Have Done It!!! You WON!"}));
+
+                }
             }
             else {
+                if (this.state.layoutArray[wx][wy].name === "Storage") {
+                    this.setState((state) => ({storedCount: this.state.storedCount - 1}));
+                }
                 theCrate.stored = false;
             }
 
@@ -111,6 +122,24 @@ class Canvas extends React.Component {
 
     }
 
+    makeItRed(piece, x, y) {
+        const canvas = this.refs.canvas;
+        const ctx = canvas.getContext("2d");
+        var h = this.state.height;
+        var w = this.state.width;
+
+        ctx.beginPath();
+        ctx.lineWidth = 0;
+        ctx.strokeStyle = "white";
+        ctx.rect(x * w, y * h, h, w);
+
+        ctx.fillStyle = "red";
+        ctx.fillRect((x * w) + 5, (y * h) + 5, h - 10, w - 10);
+        ctx.stroke();
+        ctx.closePath();
+
+
+    }
 
     // redraw the previous position
     restorePreviousPosition(piece) {
@@ -136,14 +165,13 @@ class Canvas extends React.Component {
 
     // Take the current x,y and the position to move to x2, y2 and the look ahead to x3, y3
     updateBoardPiece(x, y, x2, y2, x3, y3) {
-        const canvas = this.refs.canvas;
-        const ctx = canvas.getContext("2d");
-        var h = this.state.height;
-        var w = this.state.width;
+
         var result = 0;
 
+        var piece = this.state.layoutArray[x2][y2];
+
         if (x2 > 0 && y2 > 0) {
-            var piece = this.state.layoutArray[x2][y2];
+            //var piece = this.state.layoutArray[x2][y2];
             if (piece != null) {
                 console.log(piece.name + " " + piece.rectangle.x);
             }
@@ -171,17 +199,8 @@ class Canvas extends React.Component {
         }
 
         else if (this.state.layoutArray[x2][y2].name === "Brick Wall") {
-            // NOTE - create a function called makeItRed();
-            ctx.beginPath();
-            ctx.lineWidth = 0;
-            ctx.strokeStyle = "white";
-            ctx.rect(x * w, y * h, h, w);
 
-            ctx.fillStyle = "red";
-            ctx.fillRect((x * w) + 5, (y * h) + 5, h - 10, w - 10);
-            ctx.stroke();
-            ctx.closePath();
-            result = -1;
+            this.makeItRed(piece, x, y);
         }
         else {
             // remove piece from current position
@@ -195,6 +214,9 @@ class Canvas extends React.Component {
         return result;
     }
 
+    handleClick = e => {
+        console.log(e);
+    }
 
     handleKey = e => {
 
@@ -231,6 +253,15 @@ class Canvas extends React.Component {
 
     }
 
+    anotherExamplecomponentDidMount() {
+        const context = this.canvasA.getContext('2d');
+
+        const image = new Image();
+        image.src = "whereever-you-image-url-live.jpg";
+        image.onload = () => {
+            context.drawImage(image, 0, 0, this.canvasA.width, this.canvasA.height);
+        };
+    }
 
 // render the board
 // initialize the lookupArray to check for adjacent items during navigation
@@ -290,12 +321,16 @@ class Canvas extends React.Component {
 
         // Red rectangle
         canvas.addEventListener('keydown', this.handleKey);
+        canvas.addEventListener('click', this.handleClick, false);
         canvas.focus();
 
     }
 
     componentWillUnmount() {
         this.canvas.removeEventListener('keydown', this.handleKey);
+
+        this.canvas.removeEventListener('click', this.handleClick, false);
+
     }
 
 
@@ -305,7 +340,8 @@ class Canvas extends React.Component {
                 Select Canvas to enable key press. Use the "U" "D" "R" and "L" keys to move the warehouse operator
                 (blue)
                 <br/>
-                Move the black crates into the Tan storage compartments.
+                There are {this.state.storedCount} in storage. Move the green crates into the Tan storage
+                compartments. {this.state.playerMessage}
                 <canvas ref="canvas" width={800} height={900}/>
                 <img ref="image" src={logo} width="10" height="10"/>
                 <p> Player Name: &nbsp;
